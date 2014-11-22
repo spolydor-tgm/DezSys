@@ -24,7 +24,7 @@ public class Reciver implements Runnable {
 
 	private String chatroom;
 
-	private boolean runState;
+	private volatile boolean runState;
 
 	private Message message;
 
