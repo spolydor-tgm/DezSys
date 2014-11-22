@@ -81,7 +81,7 @@ public class Sender implements Runnable {
 	}
 
 	public void sendMessage() throws JMSException {
-		this.message = this.session.createTextMessage(this.ip + ": " + text);
+		this.message = this.session.createTextMessage(this.user + " [" + this.ip + "]: " + text);
 		this.producer.send(this.message);
 		System.out.println(this.message.getText());
 		this.text = null;
