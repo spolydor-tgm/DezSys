@@ -1,5 +1,6 @@
 package Communication;
 
+import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
@@ -20,7 +21,7 @@ public class Sender implements Runnable {
 
 	private String user;
 
-	private String password;
+	private final String password = ActiveMQConnection.DEFAULT_PASSWORD;
 
 	private String url;
 
@@ -32,10 +33,9 @@ public class Sender implements Runnable {
 
 	private String ip;
 
-	public Sender(String user, String password, String url, String chatroom, String ip) {
+	public Sender(String user, String url, String chatroom, String ip) {
 		try {
 			this.user = user;
-			this.password = password;
 			this.url = url;
 			this.chatroom = chatroom;
 			this.ip	= ip;
