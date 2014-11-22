@@ -57,16 +57,27 @@ public class Sender implements Runnable {
 
 	public void start() {
 		try {
+
 			this.connection.start();
 			this.runState = true;
+
 		} catch (JMSException jmse) {}
 	}
 
 	public void stop() {
 		try {
+
 			this.connection.stop();
 			this.runState = false;
-		} catch (JMSException e) {}
+
+		} catch (JMSException e) {
+		} finally {
+
+			try { producer.close(); } catch ( Exception e ) {}
+			try { session.close(); } catch ( Exception e ) {}
+			try { connection.close(); } catch ( Exception e ) {}
+
+		}
 	}
 
 	public void sendMessage() throws JMSException {
