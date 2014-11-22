@@ -4,7 +4,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
 
-public class Reciver implements Runnable {
+public class Receiver implements Runnable {
 
 	private Session session=null;
 
@@ -40,16 +40,17 @@ public class Reciver implements Runnable {
 		}
 	}
 
-	public void Reciver(String user, String password, String url, String chatroom) {
+	public Receiver(String user, String password, String url, String chatroom) {
 		this.user=user;
 		this.password=password;
 		this.url=url;
+		this.chatroom = chatroom;
 
-		connectionFactory = new ActiveMQConnectionFactory(user, password, url);
+		connectionFactory = new ActiveMQConnectionFactory(this.user, this.password, this.url);
 		try {
 			connection = connectionFactory.createConnection();
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-			destination = session.createTopic( chatroom );
+			destination = session.createTopic( this.chatroom );
 			consumer = session.createConsumer( destination );
 
 		} catch (JMSException e) {
@@ -60,19 +61,21 @@ public class Reciver implements Runnable {
 	public void start() {
 		try {
 			connection.start();
+			runState = true;
 		} catch (JMSException e) {
 
 		}
 	}
 
 	public void stop() {
-		runState=false;
 		try {
+			connection.stop();
+			runState=false;
 			consumer.close();
 			session.close();
 			connection.close();
 		} catch (JMSException e) {
-			e.printStackTrace();
+
 		}
 	}
 
