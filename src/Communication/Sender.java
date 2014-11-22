@@ -5,7 +5,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
 
-public class Sender implements Runnable {
+public class Sender {
 
 	private Session session;
 
@@ -42,7 +42,7 @@ public class Sender implements Runnable {
 
 			this.connectionFactory = new ActiveMQConnectionFactory(this.user, this.password, this.url);
 			this.connection = this.connectionFactory.createConnection();
-
+			this.connection.start();
 			this.session = this.connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			this.destination = this.session.createTopic( this.chatroom );
 
@@ -56,12 +56,12 @@ public class Sender implements Runnable {
 	}
 
 	public void start() {
-		try {
+		//try {
 
-			this.connection.start();
+			//this.connection.start();
 			this.runState = true;
 
-		} catch (JMSException jmse) {}
+		//} catch (JMSException jmse) {}
 	}
 
 	public void stop() {
@@ -83,22 +83,16 @@ public class Sender implements Runnable {
 	public void sendMessage() throws JMSException {
 		this.message = this.session.createTextMessage(this.user + " [" + this.ip + "]: " + text);
 		this.producer.send(this.message);
-		System.out.println(this.message.getText());
 		this.text = null;
 	}
 
 	public void setText(String text) {
 		this.text = text;
-	}
-
-	@Override
-	public void run() {
-		if (runState) {
-			if (text != null) {
-				try {
-					this.sendMessage();
-				} catch (JMSException e) {}
-			}
+		try {
+			this.sendMessage();
+		} catch (JMSException e) {
+			e.printStackTrace();
 		}
 	}
+
 }

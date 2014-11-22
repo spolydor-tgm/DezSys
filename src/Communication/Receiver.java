@@ -29,13 +29,20 @@ public class Receiver implements Runnable {
 
 	private TextMessage message;
 
+	private boolean firstTimeRun=true;
+
 	@Override
 	public void run() {
-		if(runState) {
+		while(runState) {
 			try {
 				message = (TextMessage) consumer.receive();
-				System.out.println(""+message.getText());
+				if(firstTimeRun == false) {
+					System.out.println("" + message.getText());
+				} else
+					firstTimeRun=false;
 			} catch (JMSException e) {
+
+			} catch (NullPointerException e){
 
 			}
 		}
@@ -49,6 +56,7 @@ public class Receiver implements Runnable {
 		connectionFactory = new ActiveMQConnectionFactory(this.user, this.password, this.url);
 		try {
 			connection = connectionFactory.createConnection();
+			connection.start();
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			destination = session.createTopic( this.chatroom );
 			consumer = session.createConsumer( destination );
@@ -59,18 +67,18 @@ public class Receiver implements Runnable {
 	}
 
 	public void start() {
-		try {
-			connection.start();
+		//try {
+			//connection.start();
 			runState = true;
-		} catch (JMSException e) {
+		//} catch (JMSException e) {
 
-		}
+		//}
 	}
 
 	public void stop() {
 		try {
-			connection.stop();
 			runState=false;
+			connection.stop();
 			consumer.close();
 			session.close();
 			connection.close();
