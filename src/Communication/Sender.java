@@ -1,5 +1,7 @@
 package Communication;
 
+import javax.jms.*;
+
 public class Sender implements Runnable {
 
 	private Session session;
@@ -9,6 +11,8 @@ public class Sender implements Runnable {
 	private MessageProducer producer;
 
 	private Destination destination;
+
+	private ConnectionFactory connectionFactory;
 
 	private String user;
 
@@ -29,11 +33,17 @@ public class Sender implements Runnable {
 	}
 
 	public void start() {
-
+		try {
+			this.connection.start();
+		} catch (JMSException jmse) {}
 	}
 
 	public void stop() {
 
 	}
 
+	@Override
+	public void run() {
+
+	}
 }
