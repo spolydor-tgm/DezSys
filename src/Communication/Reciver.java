@@ -24,18 +24,19 @@ public class Reciver implements Runnable {
 
 	private String chatroom;
 
-	private boolean runState;
+	private volatile boolean runState;
 
-	private Message message;
+	private TextMessage message;
 
 	@Override
 	public void run() {
-		try {
-			if(runState == true) {
+		if(runState) {
+			try {
 				message = (TextMessage) consumer.receive();
-			}
-		} catch (JMSException e) {
+				System.out.println(""+message.getText());
+			} catch (JMSException e) {
 
+			}
 		}
 	}
 
@@ -73,7 +74,6 @@ public class Reciver implements Runnable {
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 }
