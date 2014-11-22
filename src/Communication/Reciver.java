@@ -1,14 +1,19 @@
 package Communication;
 
+import javax.jms.Connection;
+import javax.jms.Destination;
+import javax.jms.MessageConsumer;
+import javax.jms.Session;
+
 public class Reciver implements Runnable {
 
-	private Session session;
+	private Session session=null;
 
-	private Connection connection;
+	private Connection connection=null;
 
-	private MessageProducer producer;
+	private MessageConsumer producer=null;
 
-	private Destination destination;
+	private Destination destination=null;
 
 	private String user;
 
@@ -21,7 +26,7 @@ public class Reciver implements Runnable {
 	private boolean runState;
 
 	public Reciver(String user, String password, String url) {
-
+		this.user=user;
 	}
 
 	public void Reciver(String user, String password, String url, String chatroom) {
@@ -36,4 +41,8 @@ public class Reciver implements Runnable {
 
 	}
 
+	@Override
+	public void run() {
+
+	}
 }
