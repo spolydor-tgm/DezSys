@@ -24,7 +24,7 @@ public class Mail {
 	public Mail(String ip,String broker_ip) {
 		this.ip =ip;
 		try {
-			connectionFactory = new ActiveMQConnectionFactory(ip, this.password, "tcp://"+broker_ip+":61616");
+			connectionFactory = new ActiveMQConnectionFactory(ip, this.password, "tcp://"+broker_ip+":61616"); //
 			connection = connectionFactory.createQueueConnection();
 			connection.start();
 			session=connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);

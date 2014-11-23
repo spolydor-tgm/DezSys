@@ -20,6 +20,11 @@ public class Cli implements Runnable{
 
 	private final String ip;
 
+	/**
+	 * Neues Cli-Objekt erstellen
+	 * Standard InputStream oeffnen
+	 * IP-Adresse des Benutzers speichern
+	 */
 	public Cli() {
 		stdIn = new BufferedReader(new InputStreamReader(System.in));
 		String[] ip = new String[0];
@@ -32,6 +37,13 @@ public class Cli implements Runnable{
 
 	}
 
+	/**
+	 * Verbindung mit einem Chatroom erstellen
+	 * @param ip_broker Adresse des Brokers (ActiveMQ)
+	 * @param username Username
+	 * @param chatroom Name des Chatroom
+	 * @param ip_user IP-Adresse des Benutzers
+	 */
 	public void connectToChatroom(String ip_broker, String username, String chatroom,String ip_user) {
 
 		chatroomReceiver = new Receiver(username,ip_broker,chatroom);
@@ -42,20 +54,26 @@ public class Cli implements Runnable{
 		chatroomReceiver.start();
 		chatroomRec.start();
 
-		chatroomSender.start();
+		// chatroomSender.start();
 
 
 		connectedToChatroom=true;
 	}
 
+	/**
+	 * Chatroom verlassen und alle offenen Verbindungen des Chatroom stoppen
+	 */
 	public void exitChatroom() {
 
 		this.chatroomSender.stop();
 		this.chatroomReceiver.stop();
-		this.mail.mailStop();
+		// this.mail.mailStop();
 		connectedToChatroom = false;
 	}
 
+	/**
+	 * Programm beenden
+	 */
 	public void exitProgram() {
 		System.exit(0);
 	}
@@ -66,18 +84,19 @@ public class Cli implements Runnable{
 
 		try {
 			String input="";
+			// Ausgabe der moeglichen Befehle + parameter
 			System.out.println("vsdbchat ip_broker username chatroom");
 			System.out.println("MAIL ip_des_benutzers ip_message_broker nachricht");
 			System.out.println("MAILBOX ip_broker");
 			// System.out.println(ip);
 
 			while(input != null) {
-				input = stdIn.readLine();
+				input = stdIn.readLine(); // Eingabe einlesen
 				// System.out.println(input);
 				input=input.trim();
 				String[] inputInformation;
-				inputInformation = input.split(" ");
-				if(inputInformation[0].equals("vsdbchat") && connectedToChatroom == false){
+				inputInformation = input.split(" "); // Eingabe nach leerzeichen auftrennen
+				if(inputInformation[0].equals("vsdbchat") && connectedToChatroom == false){ // vsdbchat starten, wenn noch keiner aktiv ist
 					if(inputInformation.length == 5) {
 						String ipbroker = "tcp://"+inputInformation[1]+":61616";
 						this.connectToChatroom(ipbroker, inputInformation[2], inputInformation[3], ip);
@@ -88,13 +107,13 @@ public class Cli implements Runnable{
 					}
 				}
 
-				if (inputInformation[0].equals("MAIL")) {
+				if (inputInformation[0].equals("MAIL")) { // mail versenden
 					String nachricht = "";
 					if (inputInformation.length >= 4) {
 						if (mail == null) {
 							mail = new Mail(this.ip,inputInformation[2]);
 						}
-						for (int x = 2; x < inputInformation.length; x++)
+						for (int x = 2; x < inputInformation.length; x++) // Nachricht zusammenbauen
 							nachricht = nachricht + inputInformation[x] + " ";
 
 						mail.sendMail(inputInformation[1], nachricht);
@@ -104,7 +123,7 @@ public class Cli implements Runnable{
 					}
 				}
 
-				if (inputInformation[0].equals("MAILBOX")) {
+				if (inputInformation[0].equals("MAILBOX")) { // Mailbox abrufen
 
 						if (inputInformation.length == 2){
 
@@ -115,14 +134,14 @@ public class Cli implements Runnable{
 						}
 				}
 
-				if (input.equals("EXIT") && connectedToChatroom == false) {
+				if (input.equals("EXIT") && connectedToChatroom == false) { // Programm beenden
 					this.exitProgram();
 				}
-				if (input.equals("EXIT") && connectedToChatroom == true) {
+				if (input.equals("EXIT") && connectedToChatroom == true) { // Chatroom verlassen
 					this.exitChatroom();
 				}
 
-				if(connectedToChatroom) {
+				if(connectedToChatroom) { // Wenn im chatroom dann Nachricht senden
 					chatroomSender.setText(input);
 				}
 			}

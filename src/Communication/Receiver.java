@@ -48,28 +48,40 @@ public class Receiver implements Runnable {
 		}
 	}
 
+	/**
+	 * Erzeugt ein Sender Objekt
+	 * @param user Username
+	 * @param url Adresse des ActiveMQ (Message Broker)
+	 * @param chatroom name des Chatrooms (z.B.: Test2)
+	 */
 	public Receiver(String user, String url, String chatroom) {
 		this.user=user;
 		this.url=url;
 		this.chatroom = chatroom;
 
-		connectionFactory = new ActiveMQConnectionFactory(this.user, this.password, this.url);
+		connectionFactory = new ActiveMQConnectionFactory(this.user, this.password, this.url); // Neue ActiveMQConnectionFactory mit dem user, password und url des Message Brokers erstellen
 		try {
-			connection = connectionFactory.createConnection();
-			connection.start();
-			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-			destination = session.createTopic( this.chatroom );
-			consumer = session.createConsumer( destination );
+			connection = connectionFactory.createConnection(); // Verbindung erzeugen
+			connection.start(); // Verbindung starten
+			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE); // session erzeugen
+			destination = session.createTopic( this.chatroom ); // Ziel festlegen
+			consumer = session.createConsumer( destination ); // Empfaenger erzeugen
 
 		} catch (JMSException e) {
 
 		}
 	}
 
+	/**
+	 * Setzt den Laufstatus auf true und startet
+	 */
 	public void start() {
 			runState = true;
 	}
 
+	/**
+	 * Stoppt den Thread und alle offenen Verbindungen des Receiver Objektes
+	 */
 	public void stop() {
 		try {
 			runState=false;

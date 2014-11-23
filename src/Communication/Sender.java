@@ -27,28 +27,33 @@ public class Sender {
 
 	private String chatroom;
 
-	private volatile boolean runState;
-
 	private String text;
 
 	private String ip;
 
+	/**
+	 * Erstellt ein Sender Objekt
+	 * @param user Username
+	 * @param url Adresse des ActiveMQ (Message Broker)
+	 * @param chatroom name des Chatrooms (z.B.: Test2)
+	 * @param ip IP-Adresse des aktuellen Benutzers
+	 */
 	public Sender(String user, String url, String chatroom, String ip) {
 		try {
-			this.user = user;
-			this.url = url;
-			this.chatroom = chatroom;
-			this.ip	= ip;
+			this.user = user; // user speichern
+			this.url = url; // Adresse des ActiveMQ (Message Broker)
+			this.chatroom = chatroom; // name des Chatrooms (z.B.: Test2)
+			this.ip	= ip; // IP-Adresse des aktuellen Benutzers
 
-			this.connectionFactory = new ActiveMQConnectionFactory(this.user, this.password, this.url);
-			this.connection = this.connectionFactory.createConnection();
-			this.connection.start();
+			this.connectionFactory = new ActiveMQConnectionFactory(this.user, this.password, this.url); // Neue ActiveMQConnectionFactory mit dem user, password und url des Message Brokers erstellen
+			this.connection = this.connectionFactory.createConnection(); // Verbindung erzeugen
+			this.connection.start(); // Verbindung starten
 
-			this.session = this.connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-			this.destination = this.session.createTopic( this.chatroom );
+			this.session = this.connection.createSession(false, Session.AUTO_ACKNOWLEDGE); // Session erzeugen
+			this.destination = this.session.createTopic( this.chatroom ); // Ziel festlegen (Topic; ist der Chatroom)
 
-			this.producer = this.session.createProducer(destination);
-			this.producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+			this.producer = this.session.createProducer(destination); // Sender erzeugen
+			this.producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT); // Liefermodus einstellen
 
 		} catch (JMSException e) {
 			System.out.println("Keine ActiveMQ bei der angegebenen Adresse gefunden!");
@@ -56,16 +61,12 @@ public class Sender {
 		}
 	}
 
-	public void start() {
-			this.runState = true;
-	}
-
+	/**
+	 * Alles vom Sender stoppen
+	 */
 	public void stop() {
 		try {
-
 			this.connection.stop();
-			this.runState = false;
-
 		} catch (JMSException e) {
 		} finally {
 
@@ -76,12 +77,20 @@ public class Sender {
 		}
 	}
 
+	/**
+	 * Nachricht senden
+	 * @throws JMSException
+	 */
 	public void sendMessage() throws JMSException {
-		this.message = this.session.createTextMessage(this.user + " [" + this.ip + "]: " + text);
-		this.producer.send(this.message);
+		this.message = this.session.createTextMessage(this.user + " [" + this.ip + "]: " + text); // erzeugt eine Textnachricht
+		this.producer.send(this.message); // sendet sie
 		this.text = null;
 	}
 
+	/**
+	 * Setzt den Text und sendet eine Nachricht
+	 * @param text Text der gesendet werden soll
+	 */
 	public void setText(String text) {
 		this.text = text;
 		try {
