@@ -1,15 +1,18 @@
 package Communication;
 
 import org.apache.activemq.ActiveMQConnection;
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 
-import javax.jms.*;
-import java.util.Enumeration;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.Session;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 public class Mail {
 
-	private String ip = "";
+	private String ip;
 
 	private final String password = ActiveMQConnection.DEFAULT_PASSWORD;
 
@@ -21,9 +24,12 @@ public class Mail {
 
 	private ConnectionFactory connectionFactory;
 
+	private QueueSend qs;
+
 	public Mail(String ip) {
 		this.ip	= ip;
 
+		/*
 		connectionFactory = new ActiveMQConnectionFactory(this.ip, this.password, "tcp://192.168.0.18:61616");
 
 		try {
@@ -34,10 +40,21 @@ public class Mail {
 		} catch (JMSException e) {
 
 		}
+		*/
 
+		try {
+			InitialContext ic = QueueSend.getInitialContext("tcp://192.168.0.18:61616");
+			qs = new QueueSend();
+			qs.init(ic, "" + this.ip);
+		} catch (NamingException e) {
+
+		} catch (JMSException e) {
+
+		}
 	}
 
 	public String checkMailbox() {
+		/*
 		String ret = "";
 		try {
 			// MessageConsumer consumer = session.createConsumer(destination);
@@ -56,9 +73,21 @@ public class Mail {
 
 		}
 		return "";
+		*/
+
+
+		return "";
 	}
 
-	public void sendMail(String ip, String message) {
+	public void sendMail(String ip_ziel, String message) {
+		try {
+			qs.setJmsFactory(ip);
+			qs.send(message);
+		} catch (JMSException e) {
+
+		}
+
+		/*
 		try {
 			destination = new ActiveMQQueue(ip);
 			MessageProducer producer = session.createProducer(destination);
@@ -73,10 +102,12 @@ public class Mail {
 		} catch (JMSException e) {
 
 		}
+		*/
 	}
 
 	public void mailStop() {
 		try {
+			qs.close();
 			connection.close();
 		} catch (JMSException e) {}
 	}
