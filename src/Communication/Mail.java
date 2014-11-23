@@ -85,12 +85,4 @@ public class Mail {
 			connection.close();
 		} catch (JMSException e) {}
 	}
-
-	public static void main(String[] args) {
-		try {
-			System.out.println(Inet4Address.getLocalHost().toString());
-		} catch (UnknownHostException e) {
-
-		}
-	}
 }
