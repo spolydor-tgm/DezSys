@@ -50,6 +50,8 @@ public class Mail {
 			try {
 				while (true) {
 					TextMessage recived = (TextMessage) reciver.receiveNoWait();
+					if (recived == null)
+						break;
 					toReturn += recived.getText();
 				}
 			} catch (NullPointerException npe) {
