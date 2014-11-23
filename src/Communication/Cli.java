@@ -35,6 +35,7 @@ public class Cli implements Runnable{
 	}
 
 	public void exitChatroom() {
+
 		this.chatroomSender.stop();
 		this.chatroomReceiver.stop();
 		connectedToChatroom = false;
