@@ -67,7 +67,8 @@ public class Cli implements Runnable{
 		try {
 			String input="";
 			System.out.println("vsdbchat ip_broker username chatroom");
-
+			System.out.println("MAIL ip_des_benutzers ip_message_broker nachricht");
+			System.out.println("MAILBOX ip_broker");
 			// System.out.println(ip);
 
 			while(input != null) {
@@ -89,9 +90,9 @@ public class Cli implements Runnable{
 
 				if (inputInformation[0].equals("MAIL")) {
 					String nachricht = "";
-					if (inputInformation.length >= 3) {
+					if (inputInformation.length >= 4) {
 						if (mail == null) {
-							mail = new Mail(this.ip);
+							mail = new Mail(this.ip,inputInformation[2]);
 						}
 						for (int x = 2; x < inputInformation.length; x++)
 							nachricht = nachricht + inputInformation[x] + " ";
@@ -99,14 +100,19 @@ public class Cli implements Runnable{
 						mail.sendMail(inputInformation[1], nachricht);
 					} else {
 						System.out.println('\n' + "Falsche Eingabe, bitte wie folgt eingeben");
-						System.out.printf("MAIL ip_des_benutzers nachricht" + '\n');
+						System.out.printf("MAIL ip_des_benutzers ip_broker nachricht" + '\n');
 					}
 				}
 
 				if (inputInformation[0].equals("MAILBOX")) {
-					if (mail == null)
-						mail = new Mail(this.ip);
-						System.out.println(mail.checkMailbox());
+
+						if (inputInformation.length == 2){
+
+							if (mail == null) {
+								mail = new Mail(this.ip, inputInformation[1]);
+							}
+							System.out.println(mail.checkMailbox());
+						}
 				}
 
 				if (input.equals("EXIT") && connectedToChatroom == false) {

@@ -13,23 +13,18 @@ public class Mail {
 
 	private QueueSession session;
 
-	private Destination destination;
-
-	private Destination orderQueue;
-
 	private QueueConnection connection;
 
 	private ActiveMQConnectionFactory connectionFactory;
 
-	private MessageConsumer consumer;
+	private Queue queue;
 
-	Queue queue;
+	private QueueSender sender;
 
-	QueueSender sender;
-	public Mail(String ip) {
+	public Mail(String ip,String broker_ip) {
 		this.ip =ip;
 		try {
-			connectionFactory = new ActiveMQConnectionFactory("patrick", this.password, "tcp://192.168.0.19:61616");
+			connectionFactory = new ActiveMQConnectionFactory(ip, this.password, "tcp://"+broker_ip+":61616");
 			connection = connectionFactory.createQueueConnection();
 			connection.start();
 			session=connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -38,7 +33,6 @@ public class Mail {
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public String checkMailbox() {
@@ -50,14 +44,12 @@ public class Mail {
 			try {
 				while (true) {
 					TextMessage recived = (TextMessage) reciver.receiveNoWait();
-					if (recived == null)
-						break;
-					toReturn += recived.getText();
+
+					toReturn += recived.getText()+"\n";
 				}
 			} catch (NullPointerException npe) {
-
+				return toReturn;
 			}
-			return toReturn;
 		} catch (JMSException jmse) {
 
 		}
@@ -78,10 +70,9 @@ public class Mail {
 
 	public void mailStop() {
 		try {
+			connection.stop();
+			session.close();
 			connection.close();
 		} catch (JMSException e) {}
 	}
-
-
-
 }
