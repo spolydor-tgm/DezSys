@@ -27,6 +27,8 @@ public class Mail {
 		connectionFactory = new ActiveMQConnectionFactory(this.ip, this.password, "tcp://192.168.0.18:61616");
 
 		try {
+			this.connection = this.connectionFactory.createConnection();
+			this.connection.start();
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			connection.start();
 		} catch (JMSException e) {
