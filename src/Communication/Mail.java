@@ -5,8 +5,6 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 
 import javax.jms.*;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.util.Enumeration;
 
 public class Mail {
@@ -23,13 +21,8 @@ public class Mail {
 
 	private ConnectionFactory connectionFactory;
 
-	public Mail() {
-		try {
-			String[] ip = Inet4Address.getLocalHost().toString().split("/");
-			this.ip = ip[1];
-		} catch (UnknownHostException e) {
-
-		}
+	public Mail(String ip) {
+		this.ip	= ip;
 
 		connectionFactory = new ActiveMQConnectionFactory(this.ip, this.password, "tcp://192.168.0.18:61616");
 
