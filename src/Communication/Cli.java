@@ -24,13 +24,12 @@ public class Cli implements Runnable{
 		chatroomSender = new Sender(username,ip_broker,chatroom,ip_user);
 
 		Thread chatroomRec = new Thread(chatroomReceiver);
-		//Thread chatroomSen = new Thread(chatroomSender);
 
 		chatroomReceiver.start();
 		chatroomRec.start();
 
 		chatroomSender.start();
-		//chatroomSen.start();
+
 
 		connectedToChatroom=true;
 	}
@@ -51,6 +50,7 @@ public class Cli implements Runnable{
 
 		try {
 			String input="";
+			System.out.println("vsdbchat ip_broker username chatroom eigene_ip");
 			while(input != null) {
 				input = stdIn.readLine();
 				System.out.println(input);
@@ -59,8 +59,14 @@ public class Cli implements Runnable{
 
 				if(input.contains("vsdbchat") && connectedToChatroom == false){
 					inputInformation = input.split(" ");
-					this.connectToChatroom(inputInformation[1],inputInformation[2],inputInformation[3],inputInformation[4]);
-					connectedToChatroom=true;
+					if(inputInformation.length == 5) {
+						String ipbroker = "tcp://"+inputInformation[1]+":61616";
+						this.connectToChatroom(ipbroker, inputInformation[2], inputInformation[3], inputInformation[4]);
+						connectedToChatroom = true;
+					}else {
+						System.out.println("Falsche eingabe bitte wie folgt eingeben");
+						System.out.println("vsdbchat ip_broker username chatroom eigene_ip");
+					}
 				}
 				if (input.equals("EXIT") && connectedToChatroom == false) {
 					this.exitProgram();
