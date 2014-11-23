@@ -78,7 +78,7 @@ public class Cli implements Runnable{
 					String nachricht = "";
 					if (inputInformation.length >= 3) {
 						if (mail != null)
-							mail = new Mail(inputInformation[0]);
+							mail = new Mail();
 
 						for (int x = 2; x < inputInformation.length; x++)
 							nachricht += inputInformation[x];

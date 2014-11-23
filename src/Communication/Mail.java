@@ -5,11 +5,13 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 
 import javax.jms.*;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 
 public class Mail {
 
-	private final String ip;
+	private String ip = "";
 
 	private final String password = ActiveMQConnection.DEFAULT_PASSWORD;
 
@@ -21,9 +23,13 @@ public class Mail {
 
 	private ConnectionFactory connectionFactory;
 
-	public Mail(String ip) {
-		this.ip = ip;
+	public Mail() {
+		try {
+			String[] ip = Inet4Address.getLocalHost().toString().split("/");
+			this.ip = ip[1];
+		} catch (UnknownHostException e) {
 
+		}
 
 		connectionFactory = new ActiveMQConnectionFactory(this.ip, this.password, "tcp://192.168.0.18:61616");
 
@@ -34,7 +40,6 @@ public class Mail {
 
 		}
 
-		destination = new ActiveMQQueue(this.ip);
 	}
 
 	public String checkMailbox() {
@@ -60,6 +65,7 @@ public class Mail {
 
 	public void sendMail(String ip, String message) {
 		try {
+			destination = new ActiveMQQueue(ip);
 			MessageProducer producer = session.createProducer(destination);
 			TextMessage nachricht = session.createTextMessage(message);
 		// while (consumer.receive(1000) != null) {
@@ -80,4 +86,11 @@ public class Mail {
 		} catch (JMSException e) {}
 	}
 
+	public static void main(String[] args) {
+		try {
+			System.out.println(Inet4Address.getLocalHost().toString());
+		} catch (UnknownHostException e) {
+
+		}
+	}
 }
