@@ -67,12 +67,7 @@ public class Receiver implements Runnable {
 	}
 
 	public void start() {
-		//try {
-			//connection.start();
 			runState = true;
-		//} catch (JMSException e) {
-
-		//}
 	}
 
 	public void stop() {

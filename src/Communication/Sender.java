@@ -43,6 +43,7 @@ public class Sender {
 			this.connectionFactory = new ActiveMQConnectionFactory(this.user, this.password, this.url);
 			this.connection = this.connectionFactory.createConnection();
 			this.connection.start();
+
 			this.session = this.connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			this.destination = this.session.createTopic( this.chatroom );
 
@@ -56,12 +57,7 @@ public class Sender {
 	}
 
 	public void start() {
-		//try {
-
-			//this.connection.start();
 			this.runState = true;
-
-		//} catch (JMSException jmse) {}
 	}
 
 	public void stop() {

@@ -10,6 +10,8 @@ public class Cli implements Runnable{
 
 	private Receiver chatroomReceiver;
 
+	private Mail mail;
+
 	private boolean connectedToChatroom=false;
 
 	private BufferedReader stdIn;
@@ -37,6 +39,7 @@ public class Cli implements Runnable{
 	public void exitChatroom() {
 		this.chatroomSender.stop();
 		this.chatroomReceiver.stop();
+		this.mail.mailStop();
 		connectedToChatroom = false;
 	}
 
@@ -50,10 +53,10 @@ public class Cli implements Runnable{
 
 		try {
 			String input="";
-			System.out.println("vsdbchat ip_broker username chatroom eigene_ip");
+			// System.out.println("vsdbchat ip_broker username chatroom eigene_ip");
 			while(input != null) {
 				input = stdIn.readLine();
-				System.out.println(input);
+				// System.out.println(input);
 				input=input.trim();
 				String[] inputInformation;
 
@@ -64,10 +67,28 @@ public class Cli implements Runnable{
 						this.connectToChatroom(ipbroker, inputInformation[2], inputInformation[3], inputInformation[4]);
 						connectedToChatroom = true;
 					}else {
-						System.out.println("Falsche eingabe bitte wie folgt eingeben");
-						System.out.println("vsdbchat ip_broker username chatroom eigene_ip");
+						System.out.println('\n' + "Falsche Eingabe, bitte wie folgt eingeben");
+						System.out.println("vsdbchat ip_broker username chatroom eigene_ip" + '\n');
 					}
 				}
+
+				if (input.contains("MAIL")) {
+					inputInformation = input.split(" ");
+					String nachricht = "";
+					if (inputInformation.length >= 3) {
+						if (mail != null)
+							mail = new Mail(inputInformation[0]);
+
+						for (int x = 2; x < inputInformation.length; x++)
+							nachricht += inputInformation[x];
+
+						mail.sendMail(inputInformation[2], nachricht);
+					} else {
+						System.out.println('\n' + "Falsche Eingabe, bitte wie folgt eingeben");
+						System.out.printf("MAIL ip_des_benutzers nachricht" + '\n');
+					}
+				}
+
 				if (input.equals("EXIT") && connectedToChatroom == false) {
 					this.exitProgram();
 				}
@@ -78,7 +99,6 @@ public class Cli implements Runnable{
 				if(connectedToChatroom) {
 					chatroomSender.setText(input);
 				}
-
 			}
 		} catch (IOException e) {
 
