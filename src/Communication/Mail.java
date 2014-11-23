@@ -46,13 +46,13 @@ public class Mail {
 		String toReturn = "";
 		try {
 			queue=session.createQueue(ip);
-			while(true) {
-				QueueReceiver reciver = session.createReceiver(queue);
-				TextMessage recived = (TextMessage) reciver.receiveNoWait();
-				if(recived == null){
-					break;
+			QueueReceiver reciver = session.createReceiver(queue);
+			try {
+				while (true) {
+					TextMessage recived = (TextMessage) reciver.receiveNoWait();
+					toReturn += recived.getText();
 				}
-				toReturn += recived.getText();
+			} catch (NullPointerException npe) {
 
 			}
 			return toReturn;
