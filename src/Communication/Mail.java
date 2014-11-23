@@ -1,14 +1,10 @@
 package Communication;
 
 import org.apache.activemq.ActiveMQConnection;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Session;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.jms.*;
 
 public class Mail {
 
@@ -20,34 +16,29 @@ public class Mail {
 
 	private ActiveMQQueue destination;
 
+	private Destination orderQueue;
+
 	private Connection connection;
 
 	private ConnectionFactory connectionFactory;
 
-	private QueueSend qs;
+	private MessageConsumer consumer;
 
 	public Mail(String ip) {
 		this.ip	= ip;
 
-		/*
-		connectionFactory = new ActiveMQConnectionFactory(this.ip, this.password, "tcp://192.168.0.18:61616");
+		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(this.ip, this.password, "tcp://192.168.0.18:61616");
+		session = null;
 
 		try {
-			this.connection = this.connectionFactory.createConnection();
-			this.connection.start();
-			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+			connection = connectionFactory.createConnection();
+
+			session = connection.createSession(true, Session.SESSION_TRANSACTED);
+			orderQueue = session.createQueue(this.ip);
+
+			consumer = session.createConsumer(orderQueue);
+
 			connection.start();
-		} catch (JMSException e) {
-
-		}
-		*/
-
-		try {
-			InitialContext ic = QueueSend.getInitialContext("tcp://192.168.0.18:61616");
-			qs = new QueueSend();
-			qs.init(ic, "" + this.ip);
-		} catch (NamingException e) {
-
 		} catch (JMSException e) {
 
 		}
@@ -81,17 +72,18 @@ public class Mail {
 
 	public void sendMail(String ip_ziel, String message) {
 		try {
-			qs.setJmsFactory(ip);
-			qs.send(message);
-		} catch (JMSException e) {
+			destination = this.session.createTopic( ip_ziel );
 
-		}
-
-		/*
-		try {
-			destination = new ActiveMQQueue(ip);
 			MessageProducer producer = session.createProducer(destination);
-			TextMessage nachricht = session.createTextMessage(message);
+			MapMessage orderMessage;
+
+
+
+
+
+			//destination = new ActiveMQQueue(ip);
+			//MessageProducer producer = session.createProducer(destination);
+			//TextMessage nachricht = session.createTextMessage(message);
 		// while (consumer.receive(1000) != null) {
 		// }
 
@@ -102,12 +94,10 @@ public class Mail {
 		} catch (JMSException e) {
 
 		}
-		*/
 	}
 
 	public void mailStop() {
 		try {
-			qs.close();
 			connection.close();
 		} catch (JMSException e) {}
 	}
