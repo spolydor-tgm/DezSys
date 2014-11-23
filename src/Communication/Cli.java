@@ -90,9 +90,9 @@ public class Cli implements Runnable{
 				if (inputInformation[0].equals("MAIL")) {
 					String nachricht = "";
 					if (inputInformation.length >= 3) {
-						if (mail == null)
+						if (mail == null) {
 							mail = new Mail(this.ip);
-
+						}
 						for (int x = 2; x < inputInformation.length; x++)
 							nachricht = nachricht + inputInformation[x] + " ";
 
@@ -106,8 +106,7 @@ public class Cli implements Runnable{
 				if (inputInformation[0].equals("MAILBOX")) {
 					if (mail == null)
 						mail = new Mail(this.ip);
-
-					mail.checkMailbox();
+						System.out.println(mail.checkMailbox());
 				}
 
 				if (input.equals("EXIT") && connectedToChatroom == false) {
