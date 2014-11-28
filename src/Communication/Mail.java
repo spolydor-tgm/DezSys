@@ -9,6 +9,8 @@ public class Mail {
 
 	private String ip;
 
+	private String broker_ip;
+
 	private final String password = ActiveMQConnection.DEFAULT_PASSWORD;
 
 	private QueueSession session;
@@ -28,16 +30,7 @@ public class Mail {
 	 */
 	public Mail(String ip,String broker_ip) {
 		this.ip =ip;
-		try {
-			connectionFactory = new ActiveMQConnectionFactory(ip, this.password, "tcp://"+broker_ip+":61616"); // Neue ActiveMQConnectionFactory mit dem user, password und url des Message Brokers erstellen
-			connection = connectionFactory.createQueueConnection(); // Verbindung mit einer Queue erstellen
-			connection.start(); // Verbindung starten
-			session=connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE); // session erzeugen
-
-
-		} catch (JMSException e) {
-			e.printStackTrace();
-		}
+		this.broker_ip = broker_ip;
 	}
 
 	/**
@@ -45,6 +38,8 @@ public class Mail {
 	 * @return alle Mails, die an den Benutzer gesendet wurden (alle seit dem letzen Abruf)
 	 */
 	public String checkMailbox() {
+
+		this.mailStart();
 
 		String toReturn = "";
 		try {
@@ -57,20 +52,23 @@ public class Mail {
 					toReturn += recived.getText()+"\n";
 				}
 			} catch (NullPointerException npe) { // Nullpointer exception, wenn keine Nachricht mehr in der Queue ist
+				this.mailStop();
 				return toReturn; // Rueckgabe aller Mails
 			}
 		} catch (JMSException jmse) {
 
 		}
+
 		return toReturn;
 	}
 
 	/**
-	 * Email sendne
+	 * Email senden
 	 * @param ip_destination Ziel-Adresse (IP-Adresse des Benutzers an den die E-Mail versendet wird)
 	 * @param message Inhalt der Nachricht, welche versendet wird
 	 */
 	public void sendMail(String ip_destination, String message) {
+		this.mailStart();
 		try {
 			Queue queueToSend = session.createQueue(ip_destination); // Queue erzeugen. Queuename = IP des Ziels
 			sender=session.createSender(queueToSend); // Sender erzeugen. Sender sendet an Ziel Queue
@@ -80,6 +78,7 @@ public class Mail {
 		} catch (JMSException e) {
 
 		}
+		this.mailStop();
 	}
 
 	/**
@@ -92,5 +91,17 @@ public class Mail {
 			session.close();
 			connection.close();
 		} catch (JMSException e) {}
+	}
+
+	public void mailStart() {
+		try {
+			connectionFactory = new ActiveMQConnectionFactory(ip, this.password, "tcp://"+this.broker_ip+":61616"); // Neue ActiveMQConnectionFactory mit dem user, password und url des Message Brokers erstellen
+			connection = connectionFactory.createQueueConnection(); // Verbindung mit einer Queue erstellen
+			connection.start(); // Verbindung starten
+			session=connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE); // session erzeugen
+
+		} catch (JMSException e) {
+			e.printStackTrace();
+		}
 	}
 }

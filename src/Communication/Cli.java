@@ -97,7 +97,7 @@ public class Cli implements Runnable{
 				String[] inputInformation;
 				inputInformation = input.split(" "); // Eingabe nach leerzeichen auftrennen
 				if(inputInformation[0].equals("vsdbchat") && connectedToChatroom == false){ // vsdbchat starten, wenn noch keiner aktiv ist
-					if(inputInformation.length == 5) {
+					if(inputInformation.length == 4) {
 						String ipbroker = "tcp://"+inputInformation[1]+":61616";
 						this.connectToChatroom(ipbroker, inputInformation[2], inputInformation[3], ip);
 						connectedToChatroom = true;
