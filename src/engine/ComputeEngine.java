@@ -4,7 +4,6 @@ package engine;
  * @author Stefan Polydor
  * @version 12.12.14
  */
-
 import compute.Compute;
 import compute.Task;
 
