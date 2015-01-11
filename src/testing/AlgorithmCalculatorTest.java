@@ -1,23 +1,17 @@
 package testing;
 
-import org.junit.After;
-import org.junit.Before;
+import calculator.AlgorithmCalculator;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class AlgorithmCalculatorTest {
 
-	@Before
-	public void setUp() throws Exception {
-
-	}
-
-	@After
-	public void tearDown() throws Exception {
-
-	}
-
 	@Test
 	public void testPi() throws Exception {
-
+		AlgorithmCalculator a = new AlgorithmCalculator();
+		Double erg = new Double(a.pi(4).doubleValue());
+		Double wert= new Double (3.1416);
+		assertEquals(wert, erg);
 	}
 }
