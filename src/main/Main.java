@@ -22,7 +22,7 @@ public class Main {
         // SecurityManager, Setzt eine Policy Datei, falls keine gegeben ist
         if (System.getSecurityManager() == null) {
         	try{
-        	    System.setProperty("java.security.policy", System.class.getResource("/src/policy/program.policy").toString());
+        	    System.setProperty("java.security.policy", System.class.getResource("program.policy").toString());
         	}catch(Exception e){
         		System.err.println("Policy Datei: program.policy wurde nicht gefunden oder konnte nicht als Eigenschaft gesetzt werden");
         	}
