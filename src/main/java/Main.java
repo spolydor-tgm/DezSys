@@ -24,7 +24,6 @@ public class Main {
         	try{
         	    System.setProperty("java.security.policy", System.class.getResource("src/main/program.policy").toString());
         	}catch(Exception e){
-                e.printStackTrace();
         		System.err.println("Policy Datei: program.policy wurde nicht gefunden oder konnte nicht als Eigenschaft gesetzt werden");
                 System.exit(0);
         	}
